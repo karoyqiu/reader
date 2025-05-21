@@ -1,12 +1,17 @@
 import '@/App.css';
+import { AppSidebar } from '@/components/app-sidebar';
 import { Button } from '@/components/ui/button';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
 function App() {
   return (
-    <main className="flex flex-col gap-4">
-      <h1>Hello!</h1>
-      <Button>Button!</Button>
-    </main>
+    <SidebarProvider>
+      <AppSidebar />
+      <main>
+        <SidebarTrigger />
+        <Button>Button!</Button>
+      </main>
+    </SidebarProvider>
   );
 }
 
