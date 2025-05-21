@@ -12,17 +12,23 @@
   "app": {
     "windows": [
       {
-        "title": "reader",
-        "width": 800,
-        "height": 600
+        "title": "Reader",
+        "width": 1200,
+        "height": 700
       }
     ],
     "security": {
-      "csp": null
+      "csp": {
+        "default-src": ["'self'"],
+        "connect-src": ["ipc:", "http://ipc.localhost", "https:"],
+        "img-src": ["'self'", "https:", "data:"],
+        "media-src": ["asset:", "http://asset.localhost", "https://asset.localhost"],
+        "style-src": ["'self'"]
+      }
     }
   },
   "bundle": {
-    "active": true,
+    "active": false,
     "targets": "all",
     "icon": [
       "icons/32x32.png",
