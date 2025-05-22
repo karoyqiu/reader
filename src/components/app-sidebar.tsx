@@ -25,8 +25,8 @@ const items = [
     icon: Compass,
   },
   {
-    title: 'Subscribe',
-    url: '/subscribe',
+    title: 'Subscription',
+    url: '/subscription',
     icon: Rss,
   },
   {

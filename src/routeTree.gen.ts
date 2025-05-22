@@ -11,16 +11,16 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as SubscribeImport } from './routes/subscribe'
+import { Route as SubscriptionImport } from './routes/subscription'
 import { Route as MeImport } from './routes/me'
 import { Route as DiscoverImport } from './routes/discover'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
 
-const SubscribeRoute = SubscribeImport.update({
-  id: '/subscribe',
-  path: '/subscribe',
+const SubscriptionRoute = SubscriptionImport.update({
+  id: '/subscription',
+  path: '/subscription',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -67,11 +67,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeImport
       parentRoute: typeof rootRoute
     }
-    '/subscribe': {
-      id: '/subscribe'
-      path: '/subscribe'
-      fullPath: '/subscribe'
-      preLoaderRoute: typeof SubscribeImport
+    '/subscription': {
+      id: '/subscription'
+      path: '/subscription'
+      fullPath: '/subscription'
+      preLoaderRoute: typeof SubscriptionImport
       parentRoute: typeof rootRoute
     }
   }
@@ -83,14 +83,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/discover': typeof DiscoverRoute
   '/me': typeof MeRoute
-  '/subscribe': typeof SubscribeRoute
+  '/subscription': typeof SubscriptionRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/discover': typeof DiscoverRoute
   '/me': typeof MeRoute
-  '/subscribe': typeof SubscribeRoute
+  '/subscription': typeof SubscriptionRoute
 }
 
 export interface FileRoutesById {
@@ -98,15 +98,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/discover': typeof DiscoverRoute
   '/me': typeof MeRoute
-  '/subscribe': typeof SubscribeRoute
+  '/subscription': typeof SubscriptionRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/discover' | '/me' | '/subscribe'
+  fullPaths: '/' | '/discover' | '/me' | '/subscription'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/discover' | '/me' | '/subscribe'
-  id: '__root__' | '/' | '/discover' | '/me' | '/subscribe'
+  to: '/' | '/discover' | '/me' | '/subscription'
+  id: '__root__' | '/' | '/discover' | '/me' | '/subscription'
   fileRoutesById: FileRoutesById
 }
 
@@ -114,14 +114,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DiscoverRoute: typeof DiscoverRoute
   MeRoute: typeof MeRoute
-  SubscribeRoute: typeof SubscribeRoute
+  SubscriptionRoute: typeof SubscriptionRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DiscoverRoute: DiscoverRoute,
   MeRoute: MeRoute,
-  SubscribeRoute: SubscribeRoute,
+  SubscriptionRoute: SubscriptionRoute,
 }
 
 export const routeTree = rootRoute
@@ -137,7 +137,7 @@ export const routeTree = rootRoute
         "/",
         "/discover",
         "/me",
-        "/subscribe"
+        "/subscription"
       ]
     },
     "/": {
@@ -149,8 +149,8 @@ export const routeTree = rootRoute
     "/me": {
       "filePath": "me.tsx"
     },
-    "/subscribe": {
-      "filePath": "subscribe.tsx"
+    "/subscription": {
+      "filePath": "subscription.tsx"
     }
   }
 }

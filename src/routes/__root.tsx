@@ -9,11 +9,11 @@ export const Route = createRootRoute({
   component: () => (
     <SidebarProvider>
       <AppSidebar />
-      <main className="min-h-svh w-full">
+      <main className="flex h-svh w-full flex-col">
         <Outlet />
-        <Toaster richColors />
-        <TanStackRouterDevtools />
       </main>
+      <Toaster richColors />
+      <TanStackRouterDevtools />
     </SidebarProvider>
   ),
 });

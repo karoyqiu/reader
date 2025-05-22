@@ -10,7 +10,11 @@ const host = process.env.TAURI_DEV_HOST;
 export default defineConfig({
   plugins: [
     TanStackRouterVite({ target: 'react', autoCodeSplitting: true }),
-    react(),
+    react({
+      babel: {
+        plugins: [['babel-plugin-react-compiler', {}]],
+      },
+    }),
     tailwindcss(),
     tsconfigPaths(),
   ],
