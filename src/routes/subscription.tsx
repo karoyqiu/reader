@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useLiveQuery } from 'dexie-react-hooks';
 import { ImportIcon, PlusIcon } from 'lucide-react';
 import { toggle } from 'radashi';
 import { useState } from 'react';
@@ -17,10 +16,11 @@ import { importBookSource } from '@/lib/actions/importBookSource';
 
 export const Route = createFileRoute('/subscription')({
   component: Subscription,
+  loader: () => db.bookSources.toArray(),
 });
 
 function Subscription() {
-  const sources = useLiveQuery(() => db.bookSources.toArray()) ?? [];
+  const sources = Route.useLoaderData();
   const [checked, setChecked] = useState<string[]>([]);
 
   return (
