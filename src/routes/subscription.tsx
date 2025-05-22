@@ -44,7 +44,7 @@ function Subscription() {
           </DialogTrigger>
         </UrlInputBox>
       </div>
-      <ScrollArea className="min-h-0 flex-1">
+      <ScrollArea className="min-h-0 flex-1" nonce="zAL5psgZTuY_OsFwUDHw0A">
         <div className="flex flex-col">
           {sources.map((source) => (
             <div key={source.bookSourceUrl} className="hover:bg-accent flex items-center gap-1 p-2">
