@@ -1,4 +1,5 @@
-import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
+import { Compass, Library, Rss, User } from 'lucide-react';
 
 import {
   Sidebar,
@@ -14,31 +15,26 @@ import {
 // Menu items.
 const items = [
   {
-    title: 'Home',
-    url: '#',
-    icon: Home,
+    title: 'Books',
+    url: '/',
+    icon: Library,
   },
   {
-    title: 'Inbox',
-    url: '#',
-    icon: Inbox,
+    title: 'Discover',
+    url: '/discover',
+    icon: Compass,
   },
   {
-    title: 'Calendar',
-    url: '#',
-    icon: Calendar,
+    title: 'Subscribe',
+    url: '/subscribe',
+    icon: Rss,
   },
   {
-    title: 'Search',
-    url: '#',
-    icon: Search,
+    title: 'Me',
+    url: '/me',
+    icon: User,
   },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings,
-  },
-];
+] as const;
 
 export function AppSidebar() {
   return (
@@ -50,11 +46,11 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive>
-                    <a href={item.url}>
+                  <SidebarMenuButton asChild>
+                    <Link className="[&.active]:bg-primary" to={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
-  component: Index,
+  component: Books,
 });
 
-function Index() {
+function Books() {
   return (
     <div className="p-2">
-      <h3>Welcome Home!</h3>
+      <h3>Books!</h3>
     </div>
   );
 }
