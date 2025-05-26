@@ -20,8 +20,8 @@ const items = [
     icon: Library,
   },
   {
-    title: 'Discover',
-    url: '/discover',
+    title: 'Explore',
+    url: '/explore',
     icon: Compass,
   },
   {
@@ -49,7 +49,7 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <Link className="[&.active]:bg-primary" to={item.url}>
                       <item.icon />
-                      <span>{item.title}</span>
+                      {item.title}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

@@ -1,6 +1,6 @@
 import { standardSchemaResolver } from '@hookform/resolvers/standard-schema';
 import type { ReactNode } from '@tanstack/react-router';
-import { CheckIcon } from 'lucide-react';
+import { CheckIcon, Loader2Icon } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -66,7 +66,7 @@ export function UrlInputBox(props: UrlInputBoxProps) {
         </DialogHeader>
         <Form {...form}>
           <form
-            className="flex flex-col gap-2"
+            className="flex flex-col gap-4"
             autoComplete="off"
             onSubmit={form.handleSubmit(submit)}
           >
@@ -84,8 +84,12 @@ export function UrlInputBox(props: UrlInputBoxProps) {
               )}
             />
             <DialogFooter>
-              <Button type="submit" size="sm" disabled={form.formState.isSubmitting}>
-                <CheckIcon />
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? (
+                  <Loader2Icon className="animate-spin" />
+                ) : (
+                  <CheckIcon />
+                )}
                 OK
               </Button>
             </DialogFooter>

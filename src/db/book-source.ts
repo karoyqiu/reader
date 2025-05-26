@@ -1,3 +1,5 @@
+import { z } from 'zod/v4-mini';
+
 /** 类型，0 文本，1 音频, 2 图片, 3 文件（指的是类似知轩藏书只提供下载的网站） */
 enum BookSourceType {
   /** 文本 */
@@ -170,4 +172,17 @@ export type BookSource = {
   ruleContent?: ContentRule;
   // 段评规则
   ruleReview?: ReviewRule;
+};
+
+const headerSchema = z.record(z.string().check(z.toLowerCase()), z.string());
+
+export const getHeaderMap = (header: string | undefined | null) => {
+  if (header) {
+    try {
+      const obj = JSON.parse(header);
+      return headerSchema.parse(obj);
+    } catch (e) {}
+  }
+
+  return {};
 };

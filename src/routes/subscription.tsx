@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { ImportIcon, PlusIcon } from 'lucide-react';
 import { toggle } from 'radashi';
 import { useState } from 'react';
@@ -22,6 +22,7 @@ export const Route = createFileRoute('/subscription')({
 function Subscription() {
   const sources = Route.useLoaderData();
   const [checked, setChecked] = useState<string[]>([]);
+  const router = useRouter();
 
   return (
     <>
@@ -34,7 +35,10 @@ function Subscription() {
         <UrlInputBox
           title="Import Book Source"
           label="Input the URL of the book source:"
-          onInput={(value) => importBookSource(value)}
+          onInput={async (value) => {
+            await importBookSource(value);
+            router.invalidate();
+          }}
         >
           <DialogTrigger asChild>
             <Button variant="ghost" size="sm">

@@ -10,7 +10,7 @@ const db = new Dexie('db') as Dexie & {
 };
 
 db.version(1).stores({
-  bookSources: 'bookSourceUrl, bookSourceName, enabled, enabledExplore',
+  bookSources: 'bookSourceUrl, bookSourceName',
 });
 
 export { db, type BookSource };

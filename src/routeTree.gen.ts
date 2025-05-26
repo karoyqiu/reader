@@ -13,8 +13,9 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as SubscriptionImport } from './routes/subscription'
 import { Route as MeImport } from './routes/me'
-import { Route as DiscoverImport } from './routes/discover'
+import { Route as ExploreImport } from './routes/explore'
 import { Route as IndexImport } from './routes/index'
+import { Route as ExploreBookSourceUrlImport } from './routes/explore_/$bookSourceUrl'
 
 // Create/Update Routes
 
@@ -30,15 +31,21 @@ const MeRoute = MeImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const DiscoverRoute = DiscoverImport.update({
-  id: '/discover',
-  path: '/discover',
+const ExploreRoute = ExploreImport.update({
+  id: '/explore',
+  path: '/explore',
   getParentRoute: () => rootRoute,
 } as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ExploreBookSourceUrlRoute = ExploreBookSourceUrlImport.update({
+  id: '/explore_/$bookSourceUrl',
+  path: '/explore/$bookSourceUrl',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -53,11 +60,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/discover': {
-      id: '/discover'
-      path: '/discover'
-      fullPath: '/discover'
-      preLoaderRoute: typeof DiscoverImport
+    '/explore': {
+      id: '/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof ExploreImport
       parentRoute: typeof rootRoute
     }
     '/me': {
@@ -74,6 +81,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SubscriptionImport
       parentRoute: typeof rootRoute
     }
+    '/explore_/$bookSourceUrl': {
+      id: '/explore_/$bookSourceUrl'
+      path: '/explore/$bookSourceUrl'
+      fullPath: '/explore/$bookSourceUrl'
+      preLoaderRoute: typeof ExploreBookSourceUrlImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -81,47 +95,63 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/discover': typeof DiscoverRoute
+  '/explore': typeof ExploreRoute
   '/me': typeof MeRoute
   '/subscription': typeof SubscriptionRoute
+  '/explore/$bookSourceUrl': typeof ExploreBookSourceUrlRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/discover': typeof DiscoverRoute
+  '/explore': typeof ExploreRoute
   '/me': typeof MeRoute
   '/subscription': typeof SubscriptionRoute
+  '/explore/$bookSourceUrl': typeof ExploreBookSourceUrlRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/discover': typeof DiscoverRoute
+  '/explore': typeof ExploreRoute
   '/me': typeof MeRoute
   '/subscription': typeof SubscriptionRoute
+  '/explore_/$bookSourceUrl': typeof ExploreBookSourceUrlRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/discover' | '/me' | '/subscription'
+  fullPaths:
+    | '/'
+    | '/explore'
+    | '/me'
+    | '/subscription'
+    | '/explore/$bookSourceUrl'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/discover' | '/me' | '/subscription'
-  id: '__root__' | '/' | '/discover' | '/me' | '/subscription'
+  to: '/' | '/explore' | '/me' | '/subscription' | '/explore/$bookSourceUrl'
+  id:
+    | '__root__'
+    | '/'
+    | '/explore'
+    | '/me'
+    | '/subscription'
+    | '/explore_/$bookSourceUrl'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  DiscoverRoute: typeof DiscoverRoute
+  ExploreRoute: typeof ExploreRoute
   MeRoute: typeof MeRoute
   SubscriptionRoute: typeof SubscriptionRoute
+  ExploreBookSourceUrlRoute: typeof ExploreBookSourceUrlRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  DiscoverRoute: DiscoverRoute,
+  ExploreRoute: ExploreRoute,
   MeRoute: MeRoute,
   SubscriptionRoute: SubscriptionRoute,
+  ExploreBookSourceUrlRoute: ExploreBookSourceUrlRoute,
 }
 
 export const routeTree = rootRoute
@@ -135,22 +165,26 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/discover",
+        "/explore",
         "/me",
-        "/subscription"
+        "/subscription",
+        "/explore_/$bookSourceUrl"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/discover": {
-      "filePath": "discover.tsx"
+    "/explore": {
+      "filePath": "explore.tsx"
     },
     "/me": {
       "filePath": "me.tsx"
     },
     "/subscription": {
       "filePath": "subscription.tsx"
+    },
+    "/explore_/$bookSourceUrl": {
+      "filePath": "explore_/$bookSourceUrl.tsx"
     }
   }
 }
