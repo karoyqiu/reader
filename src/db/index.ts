@@ -13,4 +13,4 @@ db.version(1).stores({
   bookSources: 'bookSourceUrl, bookSourceName',
 });
 
-export { db, type BookSource };
+export default db;

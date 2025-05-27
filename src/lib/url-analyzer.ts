@@ -3,9 +3,8 @@ import { isNullish } from 'radashi';
 
 import type { BookSource } from '@/db';
 import { getHeaderMap } from '@/db/book-source';
-
-import { getAbsoluteUrl, getBaseUrl } from './network-utils';
-import RuleAnalyzer from './rule-analyzer';
+import { getAbsoluteUrl, getBaseUrl } from '@/lib/network-utils';
+import RuleAnalyzer from '@/lib/rule-analyzer';
 
 const paramPattern = /\s*,\s*(?=\{)/;
 const pagePattern = /<(.*?)>/;
@@ -42,6 +41,10 @@ export default class UrlAnalyzer {
     this.analyseJs();
     this.replaceKeyPageJs();
     this.analyseUrl();
+  }
+
+  get url() {
+    return this.options.url;
   }
 
   /**

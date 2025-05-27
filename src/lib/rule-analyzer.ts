@@ -1,3 +1,6 @@
+/**
+ * 通用的规则切分处理
+ */
 export default class RuleAnalyzer {
   private queue; // 被处理字符串
   private pos = 0; // 当前处理到的位置

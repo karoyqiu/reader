@@ -1,7 +1,9 @@
 import { z } from 'zod/v4-mini';
 
+import { BookType } from '@/db/book';
+
 /** 类型，0 文本，1 音频, 2 图片, 3 文件（指的是类似知轩藏书只提供下载的网站） */
-enum BookSourceType {
+export enum BookSourceType {
   /** 文本 */
   Text,
   /** 音频 */
@@ -111,7 +113,7 @@ type ReviewRule = {
 /**
  * 书源
  */
-export type BookSource = {
+export class BookSource {
   // 地址，包括 http/https
   bookSourceUrl: string;
   // 名称
@@ -119,15 +121,15 @@ export type BookSource = {
   // 分组
   bookSourceGroup?: string;
   // 类型
-  bookSourceType: BookSourceType;
+  bookSourceType?: BookSourceType;
   // 详情页url正则
   bookUrlPattern?: string;
   // 手动排序编号
-  customOrder: number;
+  customOrder?: number;
   // 是否启用
-  enabled: boolean;
+  enabled = true;
   // 启用发现
-  enabledExplore: boolean;
+  enabledExplore = true;
   // js库
   jsLib?: string;
   // 启用okhttp CookieJAr 自动保存每次请求的cookie
@@ -149,11 +151,11 @@ export type BookSource = {
   // 自定义变量说明
   variableComment?: string;
   // 最后更新时间，用于排序
-  lastUpdateTime: number;
+  lastUpdateTime?: number;
   // 响应时间，用于排序
-  respondTime: number;
+  respondTime?: number;
   // 智能排序的权重
-  weight: number;
+  weight?: number;
   // 发现url
   exploreUrl?: string;
   // 发现筛选规则
@@ -172,7 +174,39 @@ export type BookSource = {
   ruleContent?: ContentRule;
   // 段评规则
   ruleReview?: ReviewRule;
-};
+
+  constructor(url: string, name: string) {
+    this.bookSourceUrl = url;
+    this.bookSourceName = name;
+  }
+
+  getHeaderMap() {
+    return getHeaderMap(this.header);
+  }
+
+  getExploreKindsKey() {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(this.bookSourceUrl + this.exploreUrl);
+    window.crypto.subtle.digest('SHA-256', data);
+  }
+
+  getBookType() {
+    switch (this.bookSourceType) {
+      case BookSourceType.Audio:
+        return BookType.Audio;
+      case BookSourceType.Image:
+        return BookType.Image;
+      case BookSourceType.File:
+        return BookType.WebFile;
+      default:
+        return BookType.Text;
+    }
+  }
+
+  getBookInfoRule() {
+    return this.ruleBookInfo ?? {};
+  }
+}
 
 const headerSchema = z.record(z.string().check(z.toLowerCase()), z.string());
 

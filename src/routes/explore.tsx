@@ -11,7 +11,7 @@ import { badgeVariants } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { type BookSource, db } from '@/db';
-import { fromJsonArray } from '@/lib/string-utils';
+import { fromJson } from '@/lib/explore-kind';
 
 export const Route = createFileRoute('/explore')({
   component: Explore,
@@ -43,22 +43,13 @@ function Explore() {
   );
 }
 
-/**
- * 发现分类
- */
-type ExploreKind = {
-  title: string;
-  url?: string;
-  //style?: FlexChildStyle;
-};
-
 type BookSourceProps = {
   source: BookSource;
 };
 
 function ExploreTags(props: BookSourceProps) {
   const { source } = props;
-  let kinds = source.exploreUrl && fromJsonArray<ExploreKind>(source.exploreUrl);
+  let kinds = source.exploreUrl && fromJson(source.exploreUrl);
 
   if (!kinds) {
     return null;
