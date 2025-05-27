@@ -11,41 +11,13 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as SubscriptionImport } from './routes/subscription'
-import { Route as MeImport } from './routes/me'
-import { Route as ExploreImport } from './routes/explore'
 import { Route as IndexImport } from './routes/index'
-import { Route as ExploreBookSourceUrlImport } from './routes/explore_/$bookSourceUrl'
 
 // Create/Update Routes
-
-const SubscriptionRoute = SubscriptionImport.update({
-  id: '/subscription',
-  path: '/subscription',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const MeRoute = MeImport.update({
-  id: '/me',
-  path: '/me',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const ExploreRoute = ExploreImport.update({
-  id: '/explore',
-  path: '/explore',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const ExploreBookSourceUrlRoute = ExploreBookSourceUrlImport.update({
-  id: '/explore_/$bookSourceUrl',
-  path: '/explore/$bookSourceUrl',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -60,34 +32,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/explore': {
-      id: '/explore'
-      path: '/explore'
-      fullPath: '/explore'
-      preLoaderRoute: typeof ExploreImport
-      parentRoute: typeof rootRoute
-    }
-    '/me': {
-      id: '/me'
-      path: '/me'
-      fullPath: '/me'
-      preLoaderRoute: typeof MeImport
-      parentRoute: typeof rootRoute
-    }
-    '/subscription': {
-      id: '/subscription'
-      path: '/subscription'
-      fullPath: '/subscription'
-      preLoaderRoute: typeof SubscriptionImport
-      parentRoute: typeof rootRoute
-    }
-    '/explore_/$bookSourceUrl': {
-      id: '/explore_/$bookSourceUrl'
-      path: '/explore/$bookSourceUrl'
-      fullPath: '/explore/$bookSourceUrl'
-      preLoaderRoute: typeof ExploreBookSourceUrlImport
-      parentRoute: typeof rootRoute
-    }
   }
 }
 
@@ -95,63 +39,32 @@ declare module '@tanstack/react-router' {
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/explore': typeof ExploreRoute
-  '/me': typeof MeRoute
-  '/subscription': typeof SubscriptionRoute
-  '/explore/$bookSourceUrl': typeof ExploreBookSourceUrlRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/explore': typeof ExploreRoute
-  '/me': typeof MeRoute
-  '/subscription': typeof SubscriptionRoute
-  '/explore/$bookSourceUrl': typeof ExploreBookSourceUrlRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/explore': typeof ExploreRoute
-  '/me': typeof MeRoute
-  '/subscription': typeof SubscriptionRoute
-  '/explore_/$bookSourceUrl': typeof ExploreBookSourceUrlRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/explore'
-    | '/me'
-    | '/subscription'
-    | '/explore/$bookSourceUrl'
+  fullPaths: '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/explore' | '/me' | '/subscription' | '/explore/$bookSourceUrl'
-  id:
-    | '__root__'
-    | '/'
-    | '/explore'
-    | '/me'
-    | '/subscription'
-    | '/explore_/$bookSourceUrl'
+  to: '/'
+  id: '__root__' | '/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ExploreRoute: typeof ExploreRoute
-  MeRoute: typeof MeRoute
-  SubscriptionRoute: typeof SubscriptionRoute
-  ExploreBookSourceUrlRoute: typeof ExploreBookSourceUrlRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ExploreRoute: ExploreRoute,
-  MeRoute: MeRoute,
-  SubscriptionRoute: SubscriptionRoute,
-  ExploreBookSourceUrlRoute: ExploreBookSourceUrlRoute,
 }
 
 export const routeTree = rootRoute
@@ -164,27 +77,11 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/explore",
-        "/me",
-        "/subscription",
-        "/explore_/$bookSourceUrl"
+        "/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
-    },
-    "/explore": {
-      "filePath": "explore.tsx"
-    },
-    "/me": {
-      "filePath": "me.tsx"
-    },
-    "/subscription": {
-      "filePath": "subscription.tsx"
-    },
-    "/explore_/$bookSourceUrl": {
-      "filePath": "explore_/$bookSourceUrl.tsx"
     }
   }
 }

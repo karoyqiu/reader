@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { Compass, Library, Rss, User } from 'lucide-react';
+import { Library } from 'lucide-react';
 
 import {
   Sidebar,
@@ -15,24 +15,9 @@ import {
 // Menu items.
 const items = [
   {
-    title: 'Books',
+    title: 'Bookshelf',
     url: '/',
     icon: Library,
-  },
-  {
-    title: 'Explore',
-    url: '/explore',
-    icon: Compass,
-  },
-  {
-    title: 'Subscription',
-    url: '/subscription',
-    icon: Rss,
-  },
-  {
-    title: 'Me',
-    url: '/me',
-    icon: User,
   },
 ] as const;
 
@@ -41,7 +26,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>Reader</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
