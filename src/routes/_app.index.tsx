@@ -43,6 +43,7 @@ function Bookshelf() {
             search={{
               bookUrl: book.bookUrl,
               bookTitle: book.name,
+              author: book.author,
               index: book.durChapterIndex ?? 0,
             }}
           >

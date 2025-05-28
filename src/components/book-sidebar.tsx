@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { BookIcon, ChevronRight, LibraryIcon, SectionIcon } from 'lucide-react';
 
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
   Sidebar,
   SidebarContent,
@@ -15,16 +16,15 @@ import {
 } from '@/components/ui/sidebar';
 import type { BookChapter } from '@/lib/legado/book';
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
-
 type BookSidebarProps = {
   bookUrl: string;
   bookTitle: string;
+  author: string;
   chapters: BookChapter[];
 };
 
 export function BookSidebar(props: BookSidebarProps) {
-  const { bookUrl, bookTitle, chapters } = props;
+  const { bookUrl, bookTitle, author, chapters } = props;
 
   return (
     <Sidebar>
@@ -50,7 +50,7 @@ export function BookSidebar(props: BookSidebarProps) {
                             <Link
                               className="[&.active]:bg-primary"
                               to="/book"
-                              search={{ bookUrl, bookTitle, index: ch.index ?? 0 }}
+                              search={{ bookUrl, bookTitle, author, index: ch.index ?? 0 }}
                               hash="top"
                             >
                               <SectionIcon />

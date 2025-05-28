@@ -115,3 +115,9 @@ export type BookChapter = {
   /** 变量 */
   variable?: string;
 };
+
+/** 书籍进度 */
+export type BookProgress = Pick<
+  Book,
+  'name' | 'author' | 'durChapterIndex' | 'durChapterPos' | 'durChapterTime' | 'durChapterTitle'
+>;
