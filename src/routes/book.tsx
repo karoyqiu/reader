@@ -5,6 +5,7 @@ import { z } from 'zod/v4-mini';
 
 import { BookSidebar } from '@/components/book-sidebar';
 import { buttonVariants } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { getBookContent, getChapterList, saveBookProgress } from '@/lib/legado';
 import { cn } from '@/lib/utils';
@@ -43,41 +44,39 @@ function Book() {
   return (
     <SidebarProvider>
       <BookSidebar {...{ bookUrl, bookTitle, author, chapters }} />
-      <SidebarTrigger />
-      <div id="top" className="mx-auto flex max-w-142 flex-col p-8">
-        <section className="text-foreground/65 space-y-4 text-lg/loose">
+      <div className="w-full">
+        <ButtonGroup className="fixed m-1" orientation="vertical">
+          <SidebarTrigger variant="outline" size="icon" />
+          {chapters.length > 1 && index > 0 && (
+            <Link
+              className={cn(buttonVariants({ variant: 'outline', size: 'icon' }), 'grow')}
+              to="/book"
+              search={{ bookUrl, bookTitle, author, index: index - 1 }}
+              hash="top"
+            >
+              <ChevronLeftIcon />
+            </Link>
+          )}
+          {chapters.length > 1 && index < chapters.length - 1 && (
+            <Link
+              className={cn(buttonVariants({ variant: 'outline', size: 'icon' }), 'grow')}
+              to="/book"
+              search={{ bookUrl, bookTitle, author, index: index + 1 }}
+              hash="top"
+            >
+              <ChevronRightIcon />
+            </Link>
+          )}
+        </ButtonGroup>
+        <section
+          id="top"
+          className="text-foreground/65 mx-auto flex max-w-142 flex-col space-y-4 p-8 pb-32 text-lg/loose"
+        >
           <h1 className="text-center text-2xl/32">{chapter?.title}</h1>
           {lines.map((line) => (
             <p>{line}</p>
           ))}
         </section>
-        <footer className="flex gap-4 pt-16 pb-4">
-          {chapters.length > 1 && index > 0 && (
-            <Link
-              className={cn(buttonVariants({ variant: 'secondary' }), 'grow')}
-              to="/book"
-              search={{ bookUrl, bookTitle, author, index: index + 1 }}
-              hash="top"
-            >
-              <ChevronLeftIcon />
-              {chapters[index - 1].title}
-            </Link>
-          )}
-          <a className={buttonVariants({ variant: 'secondary' })} href="#top">
-            Back to top
-          </a>
-          {chapters.length > 1 && index < chapters.length - 1 && (
-            <Link
-              className={cn(buttonVariants({ variant: 'secondary' }), 'grow')}
-              to="/book"
-              search={{ bookUrl, bookTitle, author, index: index + 1 }}
-              hash="top"
-            >
-              {chapters[index + 1].title}
-              <ChevronRightIcon />
-            </Link>
-          )}
-        </footer>
       </div>
     </SidebarProvider>
   );
