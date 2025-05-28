@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { Link, createFileRoute } from '@tanstack/react-router';
 import { CompassIcon, HistoryIcon, RefreshCcwIcon, UserIcon } from 'lucide-react';
 import { isNullish } from 'radashi';
 
@@ -37,7 +37,15 @@ function Bookshelf() {
       </div>
       <div className="flex flex-wrap p-4">
         {books.map((book) => (
-          <a key={book.bookUrl} href="#">
+          <Link
+            key={book.bookUrl}
+            to="/book"
+            search={{
+              url: book.bookUrl,
+              title: book.durChapterTitle ?? '',
+              index: book.durChapterIndex ?? 0,
+            }}
+          >
             <article className="bg-card text-card-foreground flex overflow-clip rounded-xl border shadow-sm">
               <img src={book.coverUrl} className="h-40 w-30" />
               <div className="flex flex-col gap-2 p-4">
@@ -90,7 +98,7 @@ function Bookshelf() {
                 </section>
               </div>
             </article>
-          </a>
+          </Link>
         ))}
       </div>
     </>

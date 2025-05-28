@@ -3147,6 +3147,7 @@ __metadata:
     typescript: "npm:~5.8.3"
     vite: "npm:^6.3.5"
     vite-tsconfig-paths: "npm:^5.1.4"
+    zod: "npm:^3.25.32"
   dependenciesMeta:
     "@trivago/prettier-plugin-sort-imports@5.2.2":
       unplugged: true
@@ -3798,5 +3799,12 @@ __metadata:
   version: 3.25.20
   resolution: "zod@npm:3.25.20"
   checksum: 10/530819cc55a4f5c1e9ce1e0507b8ca12dda1a30ef6f08272d99eb918112f840aec8404832326faab36e6838efc35c5a376302843a1b5ddced073ff6cd80ea601
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.25.32":
+  version: 3.25.32
+  resolution: "zod@npm:3.25.32"
+  checksum: 10/58504f7e0382b04313f8e4f63d215d2a19b1d23ccdf45bf9d54c7ac9fa6362e43ba41349e251129a5d3596f4396b78d9a239d177842c04c7287e78a729b7f4bc
   languageName: node
   linkType: hard
