@@ -1,10 +1,10 @@
 import { Link, createFileRoute } from '@tanstack/react-router';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import { useEffect } from 'react';
+import { ChevronLeftIcon, ChevronRightIcon, SpeechIcon } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { z } from 'zod/v4-mini';
 
 import { BookSidebar } from '@/components/book-sidebar';
-import { buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { getBookContent, getChapterList, saveBookProgress } from '@/lib/legado';
@@ -28,8 +28,24 @@ export const Route = createFileRoute('/book')({
 function Book() {
   const { bookUrl, bookTitle, author, index } = Route.useSearch();
   const [chapters, content] = Route.useLoaderData();
+  const [voiceReady, setVoiceReady] = useState(false);
+  const [speaking, setSpeaking] = useState(false);
   const chapter = chapters.find((ch) => ch.index === index);
   const lines = content.split('\n');
+
+  const speak = useCallback(() => {
+    const synth = window.speechSynthesis;
+
+    if (synth.speaking) {
+      synth.cancel();
+      setSpeaking(false);
+    } else {
+      const utter = new SpeechSynthesisUtterance(content);
+      utter.addEventListener('start', () => setSpeaking(true));
+      utter.addEventListener('end', () => setSpeaking(false));
+      synth.speak(utter);
+    }
+  }, [content]);
 
   useEffect(() => {
     saveBookProgress({
@@ -40,6 +56,16 @@ function Book() {
       durChapterTime: Date.now(),
     }).catch(console.error);
   });
+
+  useEffect(() => {
+    window.speechSynthesis.addEventListener(
+      'voiceschanged',
+      function () {
+        setVoiceReady(this.getVoices().length > 0);
+      },
+      { once: true },
+    );
+  }, []);
 
   return (
     <SidebarProvider>
@@ -67,6 +93,14 @@ function Book() {
               <ChevronRightIcon />
             </Link>
           )}
+          <Button
+            variant={speaking ? 'default' : 'outline'}
+            size="icon"
+            disabled={!voiceReady}
+            onClick={speak}
+          >
+            <SpeechIcon />
+          </Button>
         </ButtonGroup>
         <section
           id="top"
