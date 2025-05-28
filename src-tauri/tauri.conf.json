@@ -20,9 +20,8 @@
     "security": {
       "csp": {
         "default-src": ["'self'"],
-        "connect-src": ["ipc:", "http://ipc.localhost", "https:"],
+        "connect-src": ["ipc:", "http://ipc.localhost"],
         "img-src": ["'self'", "https:", "data:"],
-        "media-src": ["asset:", "http://asset.localhost", "https://asset.localhost"],
         "style-src": ["'self'", "'nonce-zAL5psgZTuY_OsFwUDHw0A'"]
       }
     }
