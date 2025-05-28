@@ -1,6 +1,6 @@
 import type { Book } from './book';
 
-const baseUrl = 'http://192.168.0.102:1122';
+const baseUrl = 'http://192.168.0.100:1122';
 
 type ResultType<T> = {
   isSuccess: boolean;
@@ -20,7 +20,8 @@ const get = async <T>(path: string) => {
 };
 
 /** 获取所有书籍 */
-//export const getBookshelf = () => get<Book[]>('/getBookshelf');
+export const getBookshelf = () => get<Book[]>('/getBookshelf');
+/*
 export const getBookshelf = (): Book[] => [
   {
     author: '木口银',
@@ -61,3 +62,4 @@ export const getBookshelf = (): Book[] => [
     wordCount: '1字',
   },
 ];
+*/

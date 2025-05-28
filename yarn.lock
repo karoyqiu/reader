@@ -3016,6 +3016,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"radashi@npm:^12.5.1":
+  version: 12.5.1
+  resolution: "radashi@npm:12.5.1"
+  checksum: 10/d399bbac1e9283e72f2139e92532ea981f29ca29445188b0ce5e8dfc07c6ac64f80b64f57bdfc8930d1bf3ab69cfc86ff2d1f76b9104e786ae8e959ad2361828
+  languageName: node
+  linkType: hard
+
 "react-dom@npm:^19.1.0":
   version: 19.1.0
   resolution: "react-dom@npm:19.1.0"
@@ -3130,6 +3137,7 @@ __metadata:
     prettier: "npm:^3.5.3"
     prettier-plugin-organize-attributes: "npm:^1.0.0"
     prettier-plugin-tailwindcss: "npm:^0.6.11"
+    radashi: "npm:^12.5.1"
     react: "npm:^19.1.0"
     react-dom: "npm:^19.1.0"
     sonner: "npm:^2.0.3"
