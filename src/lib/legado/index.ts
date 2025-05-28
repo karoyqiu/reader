@@ -1,4 +1,4 @@
-import type { Book } from './book';
+import { type Book, BookChapter } from './book';
 
 const baseUrl = new URL('http://192.168.0.100:1122');
 
@@ -33,10 +33,14 @@ const get = async <T>(req: RequestType) => {
   throw new Error(result.errorMsg);
 };
 
-/** 获取所有书籍 */
+/** 获取所有书籍。 */
 export const getBookshelf = () => get<Book[]>({ path: '/getBookshelf' });
 
-/** 获取指定图书的第 `index` 章节的文本内容。 */
+/** 获取指定书籍的章节列表。 */
+export const getChapterList = (bookUrl: string) =>
+  get<BookChapter[]>({ path: '/getChapterList', query: { url: bookUrl } });
+
+/** 获取指定书籍的第 `index` 章节的文本内容。 */
 export const getBookContent = (bookUrl: string, index: number) =>
   get<string>({
     path: '/getBookContent',

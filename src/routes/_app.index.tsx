@@ -10,7 +10,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { getBookshelf } from '@/lib/legado';
 import type { Book } from '@/lib/legado/book';
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_app/')({
   component: Bookshelf,
   loader: () => getBookshelf(),
 });
@@ -41,8 +41,8 @@ function Bookshelf() {
             key={book.bookUrl}
             to="/book"
             search={{
-              url: book.bookUrl,
-              title: book.durChapterTitle ?? '',
+              bookUrl: book.bookUrl,
+              bookTitle: book.name,
               index: book.durChapterIndex ?? 0,
             }}
           >

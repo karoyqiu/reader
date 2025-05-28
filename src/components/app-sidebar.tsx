@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { Library } from 'lucide-react';
+import { LibraryIcon } from 'lucide-react';
 
 import {
   Sidebar,
@@ -17,7 +17,7 @@ const items = [
   {
     title: 'Bookshelf',
     url: '/',
-    icon: Library,
+    icon: LibraryIcon,
   },
 ] as const;
 
