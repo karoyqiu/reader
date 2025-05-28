@@ -12,7 +12,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
-  SidebarRail,
 } from '@/components/ui/sidebar';
 import type { BookChapter } from '@/lib/legado/book';
 
@@ -52,6 +51,7 @@ export function BookSidebar(props: BookSidebarProps) {
                               className="[&.active]:bg-primary"
                               to="/book"
                               search={{ bookUrl, bookTitle, index: ch.index ?? 0 }}
+                              hash="top"
                             >
                               <SectionIcon />
                               <span>{ch.title}</span>
@@ -79,7 +79,6 @@ export function BookSidebar(props: BookSidebarProps) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }
