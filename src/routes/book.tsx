@@ -7,8 +7,8 @@ import { BookSidebar } from '@/components/book-sidebar';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import CosyVoice from '@/lib/cosyvoice';
 import { getBookContent, getChapterList, saveBookProgress } from '@/lib/legado';
+import ChatTTS from '@/lib/speak/chattts';
 import { cn } from '@/lib/utils';
 
 const searchSchema = z.object({
@@ -17,7 +17,7 @@ const searchSchema = z.object({
   author: z.string(),
   index: z.int(),
 });
-const voice = new CosyVoice();
+const voice = new ChatTTS();
 
 export const Route = createFileRoute('/book')({
   component: Book,

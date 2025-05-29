@@ -1,51 +1,40 @@
-import { fetch } from '@tauri-apps/plugin-http';
-import { EventEmitter } from 'eventemitter3';
+import EventEmitter from 'eventemitter3';
 import PQueue from 'p-queue';
 
-const baseUrl = new URL('http://192.168.0.104:5000');
-const sftUrl = new URL('/inference_sft', baseUrl);
-
-const textToSpeech = async (signal: AbortSignal, text: string, speaker = 'xiaohe') => {
-  const resp = await fetch(sftUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-    },
-    body: new URLSearchParams({ tts_text: text, spk_id: speaker }),
-    signal,
-  });
-  const buffer = await resp.arrayBuffer();
-  const int16s = new Int16Array(buffer);
-  return new Float32Array([...int16s].map((n) => n / 32768));
-};
+const emptyBuffer = new ArrayBuffer(0);
 
 type EventName = 'loading' | 'playing' | 'stopped';
 
-export default class CosyVoice extends EventEmitter<EventName> {
-  private readonly queue = new PQueue({ concurrency: 10 });
-  private readonly ctrl = new AbortController();
-  private readonly ctx = new AudioContext();
-  private audioSource: AudioBufferSourceNode | null = null;
-  private data: Float32Array[] = [];
-  private index = 0;
+export default abstract class SpeakEngine extends EventEmitter<EventName> {
+  protected readonly queue;
+  protected readonly ctrl = new AbortController();
+  protected readonly ctx = new AudioContext();
+  protected audioSource: AudioBufferSourceNode | null = null;
+  protected data: ArrayBuffer[] = [];
+  protected index = 0;
+
+  protected constructor(concurrency: number) {
+    super();
+    this.queue = new PQueue({ concurrency });
+  }
 
   async speak(lines: string[]) {
-    this.data = new Array<Float32Array>(lines.length);
+    this.data = new Array<ArrayBuffer>(lines.length);
 
     await this.queue.addAll(
       lines.map((line, index) => async ({ signal }) => {
         console.debug('TTS for line', index);
-        const buffer = await textToSpeech(signal!, line);
-        this.data[index] = buffer;
+        const data = await this.textToAudioData(signal!, line);
+        this.data[index] = data;
         console.debug('TTSed for line', index);
 
-        this.speakFirst();
+        await this.speakFirst();
       }),
       { signal: this.ctrl.signal },
     );
   }
 
-  async stop() {
+  stop() {
     this.ctrl.abort();
     this.queue.clear();
     this.audioSource?.stop();
@@ -56,22 +45,21 @@ export default class CosyVoice extends EventEmitter<EventName> {
     return this.data.length > 0;
   }
 
-  private speakFirst() {
+  protected async speakFirst() {
     if (!this.audioSource) {
       this.audioSource = this.ctx.createBufferSource();
-      this.speakNext();
+      await this.speakNext();
     }
   }
 
-  private speakNext() {
+  protected async speakNext() {
     const data = this.data[this.index];
 
     if (data) {
       // 有数据，直接播放
       console.debug('Speaking line', this.index);
-      const buffer = this.ctx.createBuffer(1, data.length, 24000);
-      buffer.copyToChannel(data, 0);
-      this.data[this.index] = new Float32Array(0);
+      const buffer = await this.decodeAudioData(data);
+      this.data[this.index] = emptyBuffer;
 
       this.audioSource = this.ctx.createBufferSource();
       this.audioSource.buffer = buffer;
@@ -95,4 +83,7 @@ export default class CosyVoice extends EventEmitter<EventName> {
       this.emit('stopped');
     }
   }
+
+  protected abstract textToAudioData(signal: AbortSignal, text: string): Promise<ArrayBuffer>;
+  protected abstract decodeAudioData(data: ArrayBuffer): Promise<AudioBuffer> | AudioBuffer;
 }
