@@ -7,6 +7,7 @@ import { BookSidebar } from '@/components/book-sidebar';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { textToSpeech } from '@/lib/cosyvoice';
 import { getBookContent, getChapterList, saveBookProgress } from '@/lib/legado';
 import { cn } from '@/lib/utils';
 
@@ -16,6 +17,8 @@ const searchSchema = z.object({
   author: z.string(),
   index: z.int(),
 });
+const ctx = new AudioContext();
+let audioSource: AudioBufferSourceNode | null = null;
 
 export const Route = createFileRoute('/book')({
   component: Book,
@@ -28,24 +31,39 @@ export const Route = createFileRoute('/book')({
 function Book() {
   const { bookUrl, bookTitle, author, index } = Route.useSearch();
   const [chapters, content] = Route.useLoaderData();
-  const [voiceReady, setVoiceReady] = useState(false);
+  const [voiceReady, setVoiceReady] = useState(true);
   const [speaking, setSpeaking] = useState(false);
   const chapter = chapters.find((ch) => ch.index === index);
   const lines = content.split('\n');
 
-  const speak = useCallback(() => {
-    const synth = window.speechSynthesis;
-
-    if (synth.speaking) {
-      synth.cancel();
+  const speak = useCallback(async () => {
+    if (speaking) {
+      audioSource?.stop();
+      audioSource = null;
       setSpeaking(false);
     } else {
-      const utter = new SpeechSynthesisUtterance(content);
-      utter.addEventListener('start', () => setSpeaking(true));
-      utter.addEventListener('end', () => setSpeaking(false));
-      synth.speak(utter);
+      try {
+        setVoiceReady(false);
+        const data = await textToSpeech(lines[0]);
+        console.log('float32', data.length);
+        setVoiceReady(true);
+
+        const buffer = ctx.createBuffer(1, data.length, 24000);
+        buffer.copyToChannel(data, 0);
+
+        audioSource = ctx.createBufferSource();
+        audioSource.buffer = buffer;
+        audioSource.connect(ctx.destination);
+        audioSource.addEventListener('ended', () => setSpeaking(false));
+        audioSource.start();
+        setSpeaking(true);
+      } catch (e) {
+        console.error('Failed to speak', e);
+      }
     }
-  }, [content]);
+
+    setVoiceReady(true);
+  }, [speaking, content]);
 
   useEffect(() => {
     saveBookProgress({
@@ -56,16 +74,6 @@ function Book() {
       durChapterTime: Date.now(),
     }).catch(console.error);
   });
-
-  useEffect(() => {
-    window.speechSynthesis.addEventListener(
-      'voiceschanged',
-      function () {
-        setVoiceReady(this.getVoices().length > 0);
-      },
-      { once: true },
-    );
-  }, []);
 
   return (
     <SidebarProvider defaultOpen={false}>
