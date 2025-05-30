@@ -14,7 +14,7 @@ export default class CosyVoice extends SpeakEngine {
     const resp = await fetch(sftUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       },
       body: new URLSearchParams({ tts_text: text, spk_id: 'xiaohe' }),
       signal,

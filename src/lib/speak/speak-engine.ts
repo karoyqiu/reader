@@ -19,10 +19,11 @@ export default abstract class SpeakEngine extends EventEmitter<EventName> {
   }
 
   async speak(lines: string[]) {
-    this.data = new Array<ArrayBuffer>(lines.length);
+    const l = this.preprocessLines(lines);
+    this.data = new Array<ArrayBuffer>(l.length);
 
     await this.queue.addAll(
-      lines.map((line, index) => async ({ signal }) => {
+      l.map((line, index) => async ({ signal }) => {
         console.debug('TTS for line', index);
         const data = await this.textToAudioData(signal!, line);
         this.data[index] = data;
@@ -34,15 +35,21 @@ export default abstract class SpeakEngine extends EventEmitter<EventName> {
     );
   }
 
-  stop() {
+  async stop() {
     this.ctrl.abort();
     this.queue.clear();
     this.audioSource?.stop();
     this.audioSource = null;
+
+    await this.onStop();
   }
 
   get isPlaying() {
     return this.data.length > 0;
+  }
+
+  protected preprocessLines(lines: string[]) {
+    return lines;
   }
 
   protected async speakFirst() {
@@ -81,8 +88,12 @@ export default abstract class SpeakEngine extends EventEmitter<EventName> {
       this.index = 0;
       this.data = [];
       this.emit('stopped');
+
+      await this.onStop();
     }
   }
+
+  protected async onStop() {}
 
   protected abstract textToAudioData(signal: AbortSignal, text: string): Promise<ArrayBuffer>;
   protected abstract decodeAudioData(data: ArrayBuffer): Promise<AudioBuffer> | AudioBuffer;
