@@ -8,7 +8,7 @@ import { Button, buttonVariants } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { getBookContent, getChapterList, saveBookProgress } from '@/lib/legado';
-import ChatTTS from '@/lib/speak/chattts';
+import EdgeTTS from '@/lib/speak/edgetts';
 import { cn } from '@/lib/utils';
 
 const searchSchema = z.object({
@@ -17,7 +17,7 @@ const searchSchema = z.object({
   author: z.string(),
   index: z.int(),
 });
-const voice = new ChatTTS();
+const voice = new EdgeTTS();
 
 export const Route = createFileRoute('/book')({
   component: Book,
@@ -35,7 +35,7 @@ function Book() {
   const chapter = chapters.find((ch) => ch.index === index);
   const lines = useMemo(() => content.split('\n'), [content]);
 
-  const speak = useCallback(() => {
+  const speak = useCallback(async () => {
     if (voice.isPlaying) {
       voice.stop();
     } else {

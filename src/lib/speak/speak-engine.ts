@@ -18,14 +18,16 @@ export default abstract class SpeakEngine extends EventEmitter<EventName> {
     this.queue = new PQueue({ concurrency });
   }
 
-  async speak(lines: string[]) {
+  abstract getVoices(): Promise<string[]>;
+
+  async speak(lines: string[], voice?: string) {
     const l = this.preprocessLines(lines);
     this.data = new Array<ArrayBuffer>(l.length);
 
     await this.queue.addAll(
       l.map((line, index) => async ({ signal }) => {
         console.debug('TTS for line', index);
-        const data = await this.textToAudioData(signal!, line);
+        const data = await this.textToAudioData(signal!, line, voice);
         this.data[index] = data;
         console.debug('TTSed for line', index);
 
@@ -49,7 +51,7 @@ export default abstract class SpeakEngine extends EventEmitter<EventName> {
   }
 
   protected preprocessLines(lines: string[]) {
-    return lines;
+    return lines.map((line) => line.trim());
   }
 
   protected async speakFirst() {
@@ -95,6 +97,10 @@ export default abstract class SpeakEngine extends EventEmitter<EventName> {
 
   protected async onStop() {}
 
-  protected abstract textToAudioData(signal: AbortSignal, text: string): Promise<ArrayBuffer>;
+  protected abstract textToAudioData(
+    signal: AbortSignal,
+    text: string,
+    voice?: string,
+  ): Promise<ArrayBuffer>;
   protected abstract decodeAudioData(data: ArrayBuffer): Promise<AudioBuffer> | AudioBuffer;
 }

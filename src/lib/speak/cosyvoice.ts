@@ -10,13 +10,17 @@ export default class CosyVoice extends SpeakEngine {
     super(10);
   }
 
-  protected async textToAudioData(signal: AbortSignal, text: string) {
+  async getVoices() {
+    return ['xiaohe'];
+  }
+
+  protected async textToAudioData(signal: AbortSignal, text: string, voice?: string) {
     const resp = await fetch(sftUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       },
-      body: new URLSearchParams({ tts_text: text, spk_id: 'xiaohe' }),
+      body: new URLSearchParams({ tts_text: text, spk_id: voice ?? 'xiaohe' }),
       signal,
     });
 

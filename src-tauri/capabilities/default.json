@@ -9,11 +9,14 @@
     {
       "identifier": "http:allow-fetch",
       "allow": [
-        { "url": "http://192.168.0.100:1122/*" },
-        { "url": "http://192.168.0.104:5000/*" },
-        { "url": "http://192.168.0.104:9966/*" },
-        { "url": "http://127.0.0.1:9966/*" }
+        {
+          "url": "http://192.168.0.100:1122/*"
+        },
+        {
+          "url": "https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/*"
+        }
       ]
-    }
+    },
+    "websocket:default"
   ]
 }

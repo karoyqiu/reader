@@ -22,7 +22,11 @@ export default class ChatTTS extends SpeakEngine {
     super(4);
   }
 
-  protected async textToAudioData(signal: AbortSignal, text: string) {
+  async getVoices() {
+    return ['7777.pt'];
+  }
+
+  protected async textToAudioData(signal: AbortSignal, text: string, voice?: string) {
     const ttsResp = await fetch(ttsUrl, {
       method: 'POST',
       headers: {
@@ -31,7 +35,7 @@ export default class ChatTTS extends SpeakEngine {
       body: new URLSearchParams({
         text,
         prompt: '',
-        voice: '7777.pt',
+        voice: voice ?? '7777.pt',
         speed: '1',
         temperature: '0.1',
         top_p: '0.5',
