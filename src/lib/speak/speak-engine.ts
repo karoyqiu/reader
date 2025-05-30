@@ -1,5 +1,6 @@
 import EventEmitter from 'eventemitter3';
 import PQueue from 'p-queue';
+import { retry } from 'radashi';
 
 const emptyBuffer = new ArrayBuffer(0);
 
@@ -27,7 +28,9 @@ export default abstract class SpeakEngine extends EventEmitter<EventName> {
     await this.queue.addAll(
       l.map((line, index) => async ({ signal }) => {
         console.debug('TTS for line', index);
-        const data = await this.textToAudioData(signal!, line, voice);
+        const data = await retry({ delay: 1000, signal }, () =>
+          this.textToAudioData(signal!, line, voice),
+        );
         this.data[index] = data;
         console.debug('TTSed for line', index);
 
