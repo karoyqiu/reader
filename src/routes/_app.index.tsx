@@ -2,6 +2,8 @@ import { Link, createFileRoute } from '@tanstack/react-router';
 import { CompassIcon, HistoryIcon, RefreshCcwIcon, UserIcon } from 'lucide-react';
 import { isNullish } from 'radashi';
 
+import ErrorComponent from '@/components/error-component';
+import { LoadingComponent } from '@/components/loading-component';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { SidebarTrigger } from '@/components/ui/sidebar';
@@ -12,6 +14,8 @@ import type { Book } from '@/lib/legado/book';
 
 export const Route = createFileRoute('/_app/')({
   component: Bookshelf,
+  errorComponent: ErrorComponent,
+  pendingComponent: LoadingComponent,
   loader: () => getBookshelf(),
 });
 

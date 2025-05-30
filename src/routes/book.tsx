@@ -4,6 +4,8 @@ import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { z } from 'zod/v4-mini';
 
 import { BookSidebar } from '@/components/book-sidebar';
+import ErrorComponent from '@/components/error-component';
+import { LoadingComponent } from '@/components/loading-component';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
@@ -17,10 +19,13 @@ const searchSchema = z.object({
   author: z.string(),
   index: z.int(),
 });
+
 const voice = new EdgeTTS();
 
 export const Route = createFileRoute('/book')({
   component: Book,
+  errorComponent: ErrorComponent,
+  pendingComponent: LoadingComponent,
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => search,
   loader: ({ deps }) =>
