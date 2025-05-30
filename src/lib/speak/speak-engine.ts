@@ -4,9 +4,13 @@ import { retry } from 'radashi';
 
 const emptyBuffer = new ArrayBuffer(0);
 
-type EventName = 'loading' | 'playing' | 'stopped';
+type EventType = {
+  loading: () => void;
+  playing: (index: number) => void;
+  stopped: () => void;
+};
 
-export default abstract class SpeakEngine extends EventEmitter<EventName> {
+export default abstract class SpeakEngine extends EventEmitter<EventType> {
   protected readonly queue;
   protected readonly ctrl = new AbortController();
   protected readonly ctx = new AudioContext();

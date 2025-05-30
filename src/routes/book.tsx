@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from '@tanstack/react-router';
 import { ChevronLeftIcon, ChevronRightIcon, LibraryIcon, SpeechIcon } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import { z } from 'zod/v4-mini';
 
 import { BookSidebar } from '@/components/book-sidebar';
@@ -34,6 +34,7 @@ function Book() {
   const [speaking, setSpeaking] = useState(false);
   const chapter = chapters.find((ch) => ch.index === index);
   const lines = useMemo(() => content.split('\n'), [content]);
+  const id = useId();
 
   const speak = useCallback(async () => {
     if (voice.isPlaying) {
@@ -55,15 +56,25 @@ function Book() {
   });
 
   useEffect(() => {
-    voice.addListener('playing', () => {
+    voice.addListener('playing', (index) => {
       setVoiceReady(true);
       setSpeaking(true);
+
+      const p = document.querySelector(`#${id}${index}`);
+
+      if (p) {
+        p.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center',
+        });
+      }
     });
     voice.addListener('stopped', () => {
       setVoiceReady(true);
       setSpeaking(false);
     });
-  }, []);
+  }, [id]);
 
   return (
     <SidebarProvider defaultOpen={false}>
@@ -108,8 +119,10 @@ function Book() {
           className="text-foreground/65 mx-auto flex max-w-142 flex-col space-y-4 pt-8 pb-32 text-lg/loose"
         >
           <h1 className="text-center text-2xl/32">{chapter?.title}</h1>
-          {lines.map((line) => (
-            <p>{line}</p>
+          {lines.map((line, index) => (
+            <p id={`${id}${index}`} key={`${id}${index}`}>
+              {line}
+            </p>
           ))}
           {chapters.length > 1 && index < chapters.length - 1 && (
             <Link
