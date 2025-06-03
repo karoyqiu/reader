@@ -5,7 +5,7 @@ type EventType = {
 };
 
 export default class Playlist extends EventEmitter<EventType> {
-  private readonly sources = new Map<number, AudioBufferSourceNode>();
+  private readonly sources = new Map<number, AudioBufferSourceNode | 'skip'>();
   private playing: AudioBufferSourceNode | null = null;
   private next = 0;
 
@@ -38,15 +38,28 @@ export default class Playlist extends EventEmitter<EventType> {
     return promise;
   }
 
+  skip(index: number) {
+    if (index === this.next) {
+      this.playNext();
+    } else {
+      this.sources.set(index, 'skip');
+    }
+  }
+
   private playNext() {
     this.next += 1;
     const source = this.sources.get(this.next);
 
     if (source) {
       this.sources.delete(this.next);
-      this.emit('playing', this.next);
-      this.playing = source;
-      source.start();
+
+      if (source === 'skip') {
+        this.playNext();
+      } else {
+        this.emit('playing', this.next);
+        this.playing = source;
+        source.start();
+      }
     }
   }
 }

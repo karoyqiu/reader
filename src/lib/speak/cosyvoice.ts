@@ -14,7 +14,7 @@ export default class CosyVoice extends SpeakEngine {
     return ['xiaohe'];
   }
 
-  protected async textToAudioData(signal: AbortSignal, text: string, voice?: string) {
+  protected async textToSpeech(signal: AbortSignal, text: string, voice?: string) {
     const resp = await fetch(sftUrl, {
       method: 'POST',
       headers: {
@@ -24,10 +24,7 @@ export default class CosyVoice extends SpeakEngine {
       signal,
     });
 
-    return resp.arrayBuffer();
-  }
-
-  protected decodeAudioData(data: ArrayBufferLike) {
+    const data = await resp.arrayBuffer();
     const i16 = new Int16Array(data);
     const f32 = new Float32Array([...i16].map((n) => n / 32768));
     const buffer = this.ctx.createBuffer(1, f32.length, 24000);

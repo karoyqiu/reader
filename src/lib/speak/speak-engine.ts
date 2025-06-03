@@ -32,11 +32,10 @@ export default abstract class SpeakEngine extends EventEmitter<EventType> {
     await this.queue.addAll(
       l.map((line, index) => async ({ signal }) => {
         try {
-          const data = await retry({ delay: 1000, signal }, () =>
-            this.textToAudioData(signal!, line, voice),
+          const buffer = await retry({ delay: 1000, signal }, () =>
+            this.textToSpeech(signal!, line, voice),
           );
 
-          const buffer = await this.decodeAudioData(data);
           const audioSource = this.ctx.createBufferSource();
           audioSource.buffer = buffer;
           audioSource.connect(this.ctx.destination);
@@ -44,6 +43,7 @@ export default abstract class SpeakEngine extends EventEmitter<EventType> {
           await this.playlist.play(index, audioSource);
         } catch (e) {
           console.warn('Something went wrong', e);
+          this.playlist.skip(index);
         }
       }),
       { signal: this.ctrl.signal },
@@ -66,10 +66,9 @@ export default abstract class SpeakEngine extends EventEmitter<EventType> {
     return lines.map((line) => line.trim());
   }
 
-  protected abstract textToAudioData(
+  protected abstract textToSpeech(
     signal: AbortSignal,
     text: string,
     voice?: string,
-  ): Promise<ArrayBufferLike>;
-  protected abstract decodeAudioData(data: ArrayBufferLike): Promise<AudioBuffer> | AudioBuffer;
+  ): Promise<AudioBuffer>;
 }

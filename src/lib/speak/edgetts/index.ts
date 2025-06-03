@@ -14,19 +14,15 @@ export default class EdgeTTS extends SpeakEngine {
     return voices.map((v) => v.ShortName);
   }
 
-  protected async textToAudioData(_signal: AbortSignal, text: string, voice?: string) {
+  protected async textToSpeech(_signal: AbortSignal, text: string, voice?: string) {
     const gen = communicate(text, voice ?? this.voice);
     const data = await gen.next();
 
     if (data.done) {
-      return new ArrayBuffer();
+      throw new Error('No audio data');
     }
 
     gen.return();
-    return data.value.buffer;
-  }
-
-  protected decodeAudioData(data: ArrayBuffer) {
-    return this.ctx.decodeAudioData(data);
+    return this.ctx.decodeAudioData(data.value.buffer as ArrayBuffer);
   }
 }

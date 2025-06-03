@@ -26,7 +26,7 @@ export default class ChatTTS extends SpeakEngine {
     return ['7777.pt'];
   }
 
-  protected async textToAudioData(signal: AbortSignal, text: string, voice?: string) {
+  protected async textToSpeech(signal: AbortSignal, text: string, voice?: string) {
     const ttsResp = await fetch(ttsUrl, {
       method: 'POST',
       headers: {
@@ -61,10 +61,7 @@ export default class ChatTTS extends SpeakEngine {
     }
 
     const wavResp = await fetch(resp.audio_files[0].url, { signal });
-    return wavResp.arrayBuffer();
-  }
-
-  protected decodeAudioData(data: ArrayBuffer) {
-    return this.ctx.decodeAudioData(data);
+    const buffer = await wavResp.arrayBuffer();
+    return this.ctx.decodeAudioData(buffer);
   }
 }
