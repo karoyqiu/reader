@@ -36,7 +36,7 @@ function Book() {
   const { bookUrl, bookTitle, author, index } = Route.useSearch();
   const [chapters, content] = Route.useLoaderData();
   const [voiceReady, setVoiceReady] = useState(true);
-  const [speaking, setSpeaking] = useState(false);
+  const [speaking, setSpeaking] = useState(-1);
   const chapter = chapters.find((ch) => ch.index === index);
   const lines = useMemo(() => content.split('\n'), [content]);
   const id = useId();
@@ -46,7 +46,7 @@ function Book() {
       voice.stop();
     } else {
       setVoiceReady(false);
-      voice.speak(lines).catch(console.error);
+      voice.speak([chapter?.title ?? '', ...lines]).catch(console.error);
     }
   }, [lines]);
 
@@ -63,7 +63,7 @@ function Book() {
   useEffect(() => {
     voice.addListener('playing', (index) => {
       setVoiceReady(true);
-      setSpeaking(true);
+      setSpeaking(index);
 
       const p = document.querySelector(`#${id}${index}`);
 
@@ -77,7 +77,7 @@ function Book() {
     });
     voice.addListener('stopped', () => {
       setVoiceReady(true);
-      setSpeaking(false);
+      setSpeaking(-1);
     });
   }, [id]);
 
@@ -111,7 +111,7 @@ function Book() {
             </Link>
           )}
           <Button
-            variant={speaking ? 'default' : 'outline'}
+            variant={speaking >= 0 ? 'default' : 'outline'}
             size="icon"
             disabled={!voiceReady}
             onClick={speak}
@@ -123,9 +123,24 @@ function Book() {
           id="top"
           className="text-foreground/65 mx-auto flex max-w-142 flex-col space-y-4 pt-8 pb-32 text-lg/loose"
         >
-          <h1 className="text-center text-2xl/32">{chapter?.title}</h1>
+          <h1
+            id={`${id}0`}
+            className={cn(
+              'rounded px-2 text-center text-2xl/32 transition-colors duration-500',
+              speaking === 0 && 'bg-accent text-accent-foreground',
+            )}
+          >
+            {chapter?.title}
+          </h1>
           {lines.map((line, index) => (
-            <p id={`${id}${index}`} key={`${id}${index}`}>
+            <p
+              id={`${id}${index + 1}`}
+              key={`${id}${index + 1}`}
+              className={cn(
+                'rounded px-2 transition-colors duration-500',
+                speaking === index + 1 && 'bg-accent text-accent-foreground',
+              )}
+            >
               {line}
             </p>
           ))}

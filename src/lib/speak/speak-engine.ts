@@ -12,9 +12,9 @@ type EventType = {
 
 export default abstract class SpeakEngine extends EventEmitter<EventType> {
   protected readonly queue;
-  protected readonly ctrl = new AbortController();
   protected readonly ctx = new AudioContext();
   private readonly playlist = new Playlist();
+  protected ctrl: AbortController | null = null;
 
   protected constructor(concurrency: number) {
     super();
@@ -26,6 +26,8 @@ export default abstract class SpeakEngine extends EventEmitter<EventType> {
 
   async speak(lines: string[], voice?: string) {
     const l = this.preprocessLines(lines);
+    this.ctrl = new AbortController();
+    this.playlist.reset();
 
     await this.queue.addAll(
       l.map((line, index) => async ({ signal }) => {
@@ -45,7 +47,7 @@ export default abstract class SpeakEngine extends EventEmitter<EventType> {
   }
 
   async stop() {
-    this.ctrl.abort();
+    this.ctrl?.abort();
     this.queue.clear();
     this.playlist.reset();
 
