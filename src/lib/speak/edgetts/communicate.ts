@@ -6,19 +6,6 @@ import { generateSecMsGec } from './drm';
 import { concatenate, fromUtf8, inBetween, toUtf8 } from './utils';
 import { escape } from './xml';
 
-/** TTS chunk data. */
-export type TTSChunk =
-  | {
-      type: 'audio';
-      data: ArrayBuffer;
-    }
-  | {
-      type: 'WordBoundary';
-      duration: number;
-      offset: number;
-      text: string;
-    };
-
 /**
  * Communicate with the service and streams audio and metadata from the service.
  *
@@ -331,10 +318,10 @@ function getHeadersAndBody(
   headerLength: number,
 ): { headers: Record<string, string>; body: string };
 function getHeadersAndBody(
-  data: Uint8Array,
+  data: Uint8Array<ArrayBuffer>,
   headerLength: number,
-): { headers: Record<string, string>; body: Uint8Array };
-function getHeadersAndBody(data: string | Uint8Array, headerLength: number) {
+): { headers: Record<string, string>; body: Uint8Array<ArrayBuffer> };
+function getHeadersAndBody(data: string | Uint8Array<ArrayBuffer>, headerLength: number) {
   const header = data.slice(0, headerLength);
   const lines = typeof header === 'string' ? header : fromUtf8(header);
   const headers: Record<string, string> = {};

@@ -15,11 +15,15 @@ export default class EdgeTTS extends SpeakEngine {
   }
 
   protected async textToAudioData(_signal: AbortSignal, text: string, voice?: string) {
-    for await (const data of communicate(text, voice ?? this.voice)) {
-      return data.buffer;
+    const gen = communicate(text, voice ?? this.voice);
+    const data = await gen.next();
+
+    if (data.done) {
+      return new ArrayBuffer();
     }
 
-    return new ArrayBuffer();
+    gen.return();
+    return data.value.buffer;
   }
 
   protected decodeAudioData(data: ArrayBuffer) {
