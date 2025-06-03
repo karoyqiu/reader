@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from '@tanstack/react-router';
+import { Link, createFileRoute, useNavigate } from '@tanstack/react-router';
 import { ChevronLeftIcon, ChevronRightIcon, LibraryIcon, PlayIcon, SpeechIcon } from 'lucide-react';
 import { useEffect, useId, useMemo, useState } from 'react';
 import { z } from 'zod/v4-mini';
@@ -18,6 +18,7 @@ const searchSchema = z.object({
   bookTitle: z.string(),
   author: z.string(),
   index: z.int(),
+  autoPlay: z.optional(z.boolean()),
 });
 
 const voice = new EdgeTTS();
@@ -33,29 +34,37 @@ export const Route = createFileRoute('/book')({
 });
 
 function Book() {
-  const { bookUrl, bookTitle, author, index } = Route.useSearch();
+  const { bookUrl, bookTitle, author, index, autoPlay } = Route.useSearch();
   const [chapters, content] = Route.useLoaderData();
   const [voiceReady, setVoiceReady] = useState(true);
   const [current, setCurrent] = useState(-1);
   const [offset, setOffset] = useState(0);
+  const navigate = useNavigate();
   const speaking = current + offset;
   const chapter = chapters.find((ch) => ch.index === index);
   const lines = useMemo(() => content.split('\n'), [content]);
   const id = useId();
 
   const speak = async (startFrom = 0) => {
-    if (voice.isPlaying) {
-      await voice.stop();
-    } else {
+    if (!voice.isPlaying) {
       setVoiceReady(false);
       setOffset(startFrom);
       setCurrent(0);
 
       const toRead = [chapter?.title ?? '', ...lines];
       toRead.splice(0, startFrom);
-      await voice.speak(toRead).catch(console.error);
+      const ok = await voice.speak(toRead);
+
+      if (ok) {
+        await navigate({
+          to: '/book',
+          search: { bookUrl, bookTitle, author, index: index + 1, autoPlay: true },
+          hash: 'top',
+        });
+      }
     }
 
+    voice.stop();
     setVoiceReady(true);
     setCurrent(-1);
     setOffset(0);
@@ -92,6 +101,14 @@ function Book() {
       voice.removeListener('playing', onPlaying);
     };
   }, [id, offset]);
+
+  useEffect(() => {
+    if (autoPlay) {
+      console.log('Auto play');
+      setTimeout(speak, 1000);
+      //speak();
+    }
+  }, [id, autoPlay]);
 
   return (
     <SidebarProvider defaultOpen={false}>

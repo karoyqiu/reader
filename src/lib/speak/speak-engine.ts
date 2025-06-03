@@ -29,28 +29,35 @@ export default abstract class SpeakEngine extends EventEmitter<EventType> {
     this.ctrl = new AbortController();
     this.playlist.reset();
 
-    await this.queue.addAll(
-      l.map((line, index) => async ({ signal }) => {
-        try {
-          const buffer = await retry({ delay: 1000, signal }, () =>
-            this.textToSpeech(signal!, line, voice),
-          );
+    try {
+      await this.queue.addAll(
+        l.map((line, index) => async ({ signal }) => {
+          try {
+            const buffer = await retry({ delay: 1000, signal }, () =>
+              this.textToSpeech(signal!, line, voice),
+            );
 
-          const audioSource = this.ctx.createBufferSource();
-          audioSource.buffer = buffer;
-          audioSource.connect(this.ctx.destination);
+            const audioSource = this.ctx.createBufferSource();
+            audioSource.buffer = buffer;
+            audioSource.connect(this.ctx.destination);
 
-          await this.playlist.play(index, audioSource);
-        } catch (e) {
-          console.warn('Something went wrong', e);
-          this.playlist.skip(index);
-        }
-      }),
-      { signal: this.ctrl.signal },
-    );
+            await this.playlist.play(index, audioSource);
+          } catch (e) {
+            console.warn('Something went wrong', e);
+            this.playlist.skip(index);
+          }
+        }),
+        { signal: this.ctrl.signal },
+      );
+    } catch (e) {}
+
+    const ok = !this.ctrl.signal.aborted;
+    this.ctrl = null;
+
+    return ok;
   }
 
-  async stop() {
+  stop() {
     this.ctrl?.abort();
     this.queue.clear();
     this.playlist.reset();
