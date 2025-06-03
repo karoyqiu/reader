@@ -31,16 +31,20 @@ export default abstract class SpeakEngine extends EventEmitter<EventType> {
 
     await this.queue.addAll(
       l.map((line, index) => async ({ signal }) => {
-        const data = await retry({ delay: 1000, signal }, () =>
-          this.textToAudioData(signal!, line, voice),
-        );
+        try {
+          const data = await retry({ delay: 1000, signal }, () =>
+            this.textToAudioData(signal!, line, voice),
+          );
 
-        const buffer = await this.decodeAudioData(data);
-        const audioSource = this.ctx.createBufferSource();
-        audioSource.buffer = buffer;
-        audioSource.connect(this.ctx.destination);
+          const buffer = await this.decodeAudioData(data);
+          const audioSource = this.ctx.createBufferSource();
+          audioSource.buffer = buffer;
+          audioSource.connect(this.ctx.destination);
 
-        await this.playlist.play(index, audioSource);
+          await this.playlist.play(index, audioSource);
+        } catch (e) {
+          console.warn('Something went wrong', e);
+        }
       }),
       { signal: this.ctrl.signal },
     );

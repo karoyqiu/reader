@@ -1,6 +1,6 @@
 import { Link, createFileRoute } from '@tanstack/react-router';
-import { ChevronLeftIcon, ChevronRightIcon, LibraryIcon, SpeechIcon } from 'lucide-react';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { ChevronLeftIcon, ChevronRightIcon, LibraryIcon, PlayIcon, SpeechIcon } from 'lucide-react';
+import { useEffect, useId, useMemo, useState } from 'react';
 import { z } from 'zod/v4-mini';
 
 import { BookSidebar } from '@/components/book-sidebar';
@@ -36,19 +36,30 @@ function Book() {
   const { bookUrl, bookTitle, author, index } = Route.useSearch();
   const [chapters, content] = Route.useLoaderData();
   const [voiceReady, setVoiceReady] = useState(true);
-  const [speaking, setSpeaking] = useState(-1);
+  const [current, setCurrent] = useState(-1);
+  const [offset, setOffset] = useState(0);
+  const speaking = current + offset;
   const chapter = chapters.find((ch) => ch.index === index);
   const lines = useMemo(() => content.split('\n'), [content]);
   const id = useId();
 
-  const speak = useCallback(async () => {
+  const speak = async (startFrom = 0) => {
     if (voice.isPlaying) {
-      voice.stop();
+      await voice.stop();
     } else {
       setVoiceReady(false);
-      voice.speak([chapter?.title ?? '', ...lines]).catch(console.error);
+      setOffset(startFrom);
+      setCurrent(0);
+
+      const toRead = [chapter?.title ?? '', ...lines];
+      toRead.splice(0, startFrom);
+      await voice.speak(toRead).catch(console.error);
     }
-  }, [lines]);
+
+    setVoiceReady(true);
+    setCurrent(-1);
+    setOffset(0);
+  };
 
   useEffect(() => {
     saveBookProgress({
@@ -61,11 +72,11 @@ function Book() {
   });
 
   useEffect(() => {
-    voice.addListener('playing', (index) => {
+    const onPlaying = (index: number) => {
       setVoiceReady(true);
-      setSpeaking(index);
+      setCurrent(index);
 
-      const p = document.querySelector(`#${id}${index}`);
+      const p = document.querySelector(`#${id}${index + offset}`);
 
       if (p) {
         p.scrollIntoView({
@@ -74,12 +85,13 @@ function Book() {
           inline: 'center',
         });
       }
-    });
-    voice.addListener('stopped', () => {
-      setVoiceReady(true);
-      setSpeaking(-1);
-    });
-  }, [id]);
+    };
+
+    voice.addListener('playing', onPlaying);
+    return () => {
+      voice.removeListener('playing', onPlaying);
+    };
+  }, [id, offset]);
 
   return (
     <SidebarProvider defaultOpen={false}>
@@ -111,10 +123,10 @@ function Book() {
             </Link>
           )}
           <Button
-            variant={speaking >= 0 ? 'default' : 'outline'}
+            variant={current >= 0 ? 'default' : 'outline'}
             size="icon"
             disabled={!voiceReady}
-            onClick={speak}
+            onClick={() => speak()}
           >
             <SpeechIcon />
           </Button>
@@ -137,11 +149,21 @@ function Book() {
               id={`${id}${index + 1}`}
               key={`${id}${index + 1}`}
               className={cn(
-                'rounded px-2 transition-colors duration-500',
+                'group relative rounded px-2 transition-colors duration-500',
                 speaking === index + 1 && 'bg-accent text-accent-foreground',
               )}
             >
               {line}
+              {current === -1 && (
+                <Button
+                  className="absolute top-0 -left-8 hidden group-hover:flex"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => speak(index + 1)}
+                >
+                  <PlayIcon />
+                </Button>
+              )}
             </p>
           ))}
           {chapters.length > 1 && index < chapters.length - 1 && (
