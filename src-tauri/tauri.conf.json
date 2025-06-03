@@ -22,7 +22,8 @@
         "default-src": ["'self'"],
         "connect-src": ["ipc:", "http://ipc.localhost"],
         "img-src": ["'self'", "https:", "data:"],
-        "style-src": ["'self'", "'nonce-zAL5psgZTuY_OsFwUDHw0A'"]
+        "style-src": ["'self'", "'nonce-zAL5psgZTuY_OsFwUDHw0A'"],
+        "upgrade-insecure-requests": []
       }
     }
   },

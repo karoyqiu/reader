@@ -2,15 +2,9 @@ import EventEmitter from 'eventemitter3';
 import PQueue from 'p-queue';
 import { retry } from 'radashi';
 
-import Playlist from './playlist';
+import Playlist, { type PlaylistEventType } from './playlist';
 
-type EventType = {
-  loading: () => void;
-  playing: (index: number) => void;
-  stopped: () => void;
-};
-
-export default abstract class SpeakEngine extends EventEmitter<EventType> {
+export default abstract class SpeakEngine extends EventEmitter<PlaylistEventType> {
   protected readonly queue;
   protected readonly ctx = new AudioContext();
   private readonly playlist = new Playlist();
@@ -61,8 +55,6 @@ export default abstract class SpeakEngine extends EventEmitter<EventType> {
     this.ctrl?.abort();
     this.queue.clear();
     this.playlist.reset();
-
-    this.emit('stopped');
   }
 
   get isPlaying() {

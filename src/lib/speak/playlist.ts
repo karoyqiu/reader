@@ -1,10 +1,10 @@
 import EventEmitter from 'eventemitter3';
 
-type EventType = {
+export type PlaylistEventType = {
   playing: (index: number) => void;
 };
 
-export default class Playlist extends EventEmitter<EventType> {
+export default class Playlist extends EventEmitter<PlaylistEventType> {
   private readonly sources = new Map<number, AudioBufferSourceNode | 'skip'>();
   private playing: AudioBufferSourceNode | null = null;
   private next = 0;

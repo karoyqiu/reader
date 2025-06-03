@@ -103,10 +103,11 @@ function Book() {
   }, [id, offset]);
 
   useEffect(() => {
+    voice.stop();
+
     if (autoPlay) {
       console.log('Auto play');
       setTimeout(speak, 1000);
-      //speak();
     }
   }, [id, autoPlay]);
 
