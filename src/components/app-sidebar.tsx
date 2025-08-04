@@ -1,4 +1,5 @@
-import { Calendar, Home, Inbox, Search, Settings } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
+import { LibraryIcon } from 'lucide-react';
 
 import {
   Sidebar,
@@ -14,47 +15,27 @@ import {
 // Menu items.
 const items = [
   {
-    title: 'Home',
-    url: '#',
-    icon: Home,
+    title: 'Bookshelf',
+    url: '/',
+    icon: LibraryIcon,
   },
-  {
-    title: 'Inbox',
-    url: '#',
-    icon: Inbox,
-  },
-  {
-    title: 'Calendar',
-    url: '#',
-    icon: Calendar,
-  },
-  {
-    title: 'Search',
-    url: '#',
-    icon: Search,
-  },
-  {
-    title: 'Settings',
-    url: '#',
-    icon: Settings,
-  },
-];
+] as const;
 
 export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>Reader</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive>
-                    <a href={item.url}>
+                  <SidebarMenuButton asChild>
+                    <Link className="[&.active]:bg-primary" to={item.url}>
                       <item.icon />
-                      <span>{item.title}</span>
-                    </a>
+                      {item.title}
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
